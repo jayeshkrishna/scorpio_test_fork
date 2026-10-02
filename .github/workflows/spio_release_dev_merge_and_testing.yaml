@@ -1,0 +1,63 @@
+---
+#
+# ========== SCORPIO testing and merge to develop branch for releases ======
+# If a PR has a "Release PR" label and its merged to master,
+# 1) Run tests with PnetCDF
+# 2) Merge branch to develop
+# The tests are run on a single node (with PnetCDF)
+#
+# FIXME: Use this workflow for merging all PRs to develop
+name: SCORPIO Release PR merge to develop after testing
+
+on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'Branch to run the SCORPIO + PnetCDF tests and merge to develop'
+        required: true
+  pull_request:
+    types: [labeled]
+
+jobs:
+  merge_and_test:
+    # Only merge PRs with 'Release PR' label to develop
+    if: github.event.label.name == 'Release PR'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch depth 0 : Clone the entire history of all branches/tags
+          # (Required to fetch all branches and history for a successful merge)
+          # Note: Default is fetch depth 0 (only latest commit)
+          fetch-depth: 0
+
+      # Explicitly indicate that its the Github BOT performing the merge
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Merge branch to develop
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_SUBJECT: "CI: Auto merge branch ${{ github.ref_name }} into develop (PR #${{env.PR_NUMBER}})"
+        run: |
+          PR_DESC=$(gh pr view "$PR_NUMBER" --json body --jq '.body')
+          git checkout develop
+          git pull origin develop
+
+          # Perform the merge operation
+          git merge ${{ github.ref_name }} --no-ff -m "$PR_SUBJECT" -m "$PR_DESC"
+
+      - name: Test merged code
+        uses: ./.github/actions/spio_pnetcdf_testing
+        with:
+          branch_name: ${{ github.ref_name }}
+          checkout_repo: false
+          install_sw: true
+
+      - name: Push develop branch (with merged branch) to remote
+        run: |
+          git push origin develop
