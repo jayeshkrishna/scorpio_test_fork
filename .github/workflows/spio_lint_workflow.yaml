@@ -21,6 +21,11 @@ jobs:
     runs-on: ubuntu-latest  # Or other suitable runner
 
     steps:
+      # Actionlint requires newer Node.js (the default one throws errors)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Or '18', '22'
       - name: Checkout repository
         uses: actions/checkout@v4
 
