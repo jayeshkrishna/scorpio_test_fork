@@ -1,3 +1,4 @@
+# Test 01
 cmake_minimum_required (VERSION 3.7...4.0.1)
 project (SCORPIO C CXX Fortran)
 #cmake_policy(VERSION 3.5.2)
