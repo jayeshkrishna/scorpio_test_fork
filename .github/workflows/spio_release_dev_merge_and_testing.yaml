@@ -50,9 +50,9 @@ jobs:
           BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
           PR_SUBJECT: "CI: Auto merge branch origin/${{ github.event.pull_request.head.ref }} into develop (PR #${{ github.event.pull_request.number }})"
         run: |
-          PR_DESC=$(gh pr view ${PR_NUMBER} --json body --jq '.body')
+          PR_DESC=$(gh pr view "${PR_NUMBER}" --json body --jq '.body')
           git fetch origin
-          git fetch origin ${BRANCH_NAME}
+          git fetch origin "${BRANCH_NAME}"
           git checkout develop
           git pull origin develop
 
