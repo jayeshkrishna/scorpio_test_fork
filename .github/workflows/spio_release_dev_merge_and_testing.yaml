@@ -43,20 +43,22 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_SUBJECT: "CI: Auto merge branch ${{ github.ref_name }} into develop (PR #${{env.PR_NUMBER}})"
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+          PR_SUBJECT: "CI: Auto merge branch origin/${{ github.event.pull_request.head.ref }} into develop (PR #${{ github.event.pull_request.number }})"
         run: |
-          PR_DESC=$(gh pr view "$PR_NUMBER" --json body --jq '.body')
+          PR_DESC=$(gh pr view ${PR_NUMBER} --json body --jq '.body')
           git fetch origin
+          git fetch origin ${BRANCH_NAME}
           git checkout develop
           git pull origin develop
 
           # Perform the merge operation
-          git merge origin/${{ github.ref_name }} --no-ff -m "$PR_SUBJECT" -m "$PR_DESC"
+          git merge origin/${BRANCH_NAME} --no-ff -m "${PR_SUBJECT}" -m "${PR_DESC}"
 
       - name: Test merged code
         uses: ./.github/actions/spio_pnetcdf_testing
         with:
-          branch_name: ${{ github.ref_name }}
+          branch_name: develop
           checkout_repo: false
           install_sw: true
 
