@@ -24,6 +24,10 @@ jobs:
     if: github.event.label.name == 'Release PR'
     runs-on: ubuntu-latest
 
+    # This workflow needs to merge branch to develop and push it to remote
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
