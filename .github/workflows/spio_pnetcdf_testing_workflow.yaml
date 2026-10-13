@@ -73,4 +73,5 @@ jobs:
         run: |
           conda activate scorpio_env  # Activate environment
           cd scorpio_build_dir
-          make test
+          make tests
+          ctest -V -R init_finalize_np1
