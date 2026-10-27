@@ -4,7 +4,7 @@ project (SCORPIO C CXX Fortran)
 
 message(STATUS "===== Configuring SCORPIO... =====")
 
-# The project version number.
+#  The project version number.
 set(VERSION_MAJOR   2   CACHE STRING "Project major version number.")
 set(VERSION_MINOR   0   CACHE STRING "Project minor version number.")
 set(VERSION_PATCH   3   CACHE STRING "Project patch version number.")
