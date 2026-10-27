@@ -30,7 +30,7 @@ jobs:
         with:
           # Fetch depth 0 : Clone the entire history of all branches/tags
           # (Required to fetch all branches and history for a successful merge)
-          # Note: Default is fetch depth 0 (only latest commit)
+          # Note: If fetch depth is not specified, the default fetch depth is 1 (only latest commit)
           fetch-depth: 0
 
       # Explicitly indicate that its the Github BOT performing the merge
