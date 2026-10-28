@@ -30,8 +30,8 @@ on:  # yamllint disable-line rule:truthy
       verbose:
         description: 'Flag to set to run tests in verbose mode (optional)'
         required: false
-        type: string
-        default: "false"
+        type: boolean
+        default: false
 
 jobs:
   build_and_test:
