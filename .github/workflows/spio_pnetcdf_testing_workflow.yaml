@@ -21,6 +21,17 @@ on:  # yamllint disable-line rule:truthy
         type: boolean
         required: false
         default: true
+      test_names_regex:
+        description: 'Regex describing the tests to run (optional)'
+        required: false
+        type: string
+        # Run all tests by default
+        default: ".*"
+      verbose:
+        description: 'Flag to set to run tests in verbose mode (optional)'
+        required: false
+        type: string
+        default: "false"
 
 jobs:
   build_and_test:
@@ -77,4 +88,9 @@ jobs:
         run: |
           conda activate scorpio_env  # Activate environment
           cd scorpio_build_dir
-          make test
+          if [ "${{ inputs.verbose }}" = "true" ]; then
+            ctest --verbose --tests-regex "${{ inputs.test_names_regex }}"
+          else
+            # Output stdout/stderr when a test fails
+            ctest --output-on-failure "${{ inputs.test_names_regex }}"
+          fi
