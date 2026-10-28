@@ -85,12 +85,14 @@ jobs:
           # Disable non-tcp transport
           UCX_TLS: tcp,self
           UCX_NET_DEVICES: lo
+          TEST_NAMES_REGEX: ${{ inputs.test_names_regex }}
+          VERBOSE: ${{ inputs.verbose }}
         run: |
           conda activate scorpio_env  # Activate environment
           cd scorpio_build_dir
-          if [ "${{ inputs.verbose }}" = "true" ]; then
-            ctest --verbose --tests-regex "${{ inputs.test_names_regex }}"
+          if [ "$VERBOSE" = "true" ]; then
+            ctest --verbose --tests-regex "$TEST_NAMES_REGEX"
           else
             # Output stdout/stderr when a test fails
-            ctest --output-on-failure "${{ inputs.test_names_regex }}"
+            ctest --output-on-failure --tests-regex "$TEST_NAMES_REGEX"
           fi
